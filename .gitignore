@@ -1,0 +1,15 @@
+# Compiled Java files
+*.class
+bin/
+
+# IDE files (Eclipse/IntelliJ/VSCode)
+.classpath
+.project
+.settings/
+.idea/
+*.iml
+*.pydevproject
+
+# OS files
+.DS_Store
+Thumbs.db
