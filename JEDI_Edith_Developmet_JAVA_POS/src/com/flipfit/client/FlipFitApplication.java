@@ -2,8 +2,7 @@ package com.flipfit.client;
 
 import com.flipfit.bean.GymCustomer;
 import com.flipfit.bean.GymOwner;
-import com.flipfit.business.AccountService;
-import com.flipfit.business.AccountServiceImpl;
+
 import java.util.Scanner;
 
 public class FlipFitApplication {

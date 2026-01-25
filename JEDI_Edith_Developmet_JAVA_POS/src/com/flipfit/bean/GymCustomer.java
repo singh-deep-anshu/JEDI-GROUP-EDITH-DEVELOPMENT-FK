@@ -11,7 +11,11 @@ import java.util.Date;
 public class GymCustomer extends User {
     private Date registrationDate;
     private boolean isActive;
-  
+
+	public GymCustomer(String userId, String userName, String email, String password, Role role, String phoneNumber, String city) {
+		super(userId, userName, email, password, role, phoneNumber, city);
+	}
+
 	public Date getRegistrationDate() {
 		return registrationDate;
 	}

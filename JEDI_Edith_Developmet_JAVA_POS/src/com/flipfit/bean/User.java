@@ -7,8 +7,18 @@ public class User {
     private String password;
     private String phoneNumber;
     private String city;
-    private String role; // "ADMIN", "CUSTOMER", or "OWNER"
-    
+    private Role role; // "ADMIN", "CUSTOMER", or "OWNER"
+
+	public User(String userId, String userName, String email, String password, Role role, String phoneNumber, String city) {
+		this.userId = userId;
+		this.name = userName;
+		this.email = email;
+		this.password = password;
+		this.role = role;
+		this.phoneNumber=phoneNumber;
+		this.city=city;
+
+	}
     public String getUserId() {
 		return userId;
 	}
@@ -51,10 +61,10 @@ public class User {
 		this.city = city;
 	}
 	
-	public String getRole() {
+	public Role getRole() {
 		return role;
 	}
-	public void setRole(String role) {
+	public void setRole(Role role) {
 		this.role = role;
 	}
 }
