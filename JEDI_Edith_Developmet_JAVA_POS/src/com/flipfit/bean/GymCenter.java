@@ -10,6 +10,7 @@ public class GymCenter {
 	private String name;
     private String address;
     private String cityId;
+	private String ownerId;
     private int totalCapacity;
     private boolean isActive;
 	private String centerId;
@@ -27,7 +28,15 @@ public class GymCenter {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
+	public String getOwnerId() {
+		return ownerId;
+	}
+
+	public void setOwnerId(String ownerId) {
+		this.ownerId = ownerId;
+	}
+
 	public String getAddress() {
 		return address;
 	}
