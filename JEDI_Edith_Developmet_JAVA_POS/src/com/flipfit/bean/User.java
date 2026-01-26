@@ -19,6 +19,13 @@ public class User {
 		this.city=city;
 
 	}
+	
+	/**
+	 * Protected no-arg constructor for subclasses that use builder pattern.
+	 */
+	protected User() {
+		// Default constructor for subclasses
+	}
     public String getUserId() {
 		return userId;
 	}
