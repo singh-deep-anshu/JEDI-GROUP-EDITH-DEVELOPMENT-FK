@@ -10,4 +10,6 @@ public interface GymOwnerDAO {
     List<GymCenter> getAllCenters();
     void addSlot(Slot slot);
     List<Slot> getSlotsByCenterId(String centerId);
+    Slot getSlotById(String slotId);
+
 }

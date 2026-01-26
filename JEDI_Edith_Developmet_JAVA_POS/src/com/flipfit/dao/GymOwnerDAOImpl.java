@@ -39,4 +39,18 @@ public class GymOwnerDAOImpl implements GymOwnerDAO {
     public List<Slot> getSlotsByCenterId(String centerId) {
         return slotsMap.getOrDefault(centerId, new ArrayList<>());
     }
+
+    @Override
+    public Slot getSlotById(String slotId) {
+        for (List<Slot> slots : slotsMap.values()) {
+            for (Slot slot : slots) {
+                if (slot.getSlotId().equals(slotId)) {
+                    return slot;
+                }
+            }
+        }
+        return null;
+    }
+
+
 }

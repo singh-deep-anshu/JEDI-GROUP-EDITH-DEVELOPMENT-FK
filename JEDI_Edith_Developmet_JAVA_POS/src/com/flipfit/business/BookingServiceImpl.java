@@ -9,16 +9,21 @@ import com.flipfit.bean.BookingStatus;
 import com.flipfit.bean.Slot;
 import com.flipfit.dao.BookingDAO;
 import com.flipfit.dao.BookingDAOImpl;
+import com.flipfit.dao.GymOwnerDAO;
+import com.flipfit.dao.GymOwnerDAOImpl;
+
 
 public class BookingServiceImpl implements BookingService {
 
 	private BookingDAO bookingDAO = new BookingDAOImpl();
-	private static java.util.Map<String, Slot> slotMap = GymServiceImpl.slotMap;
+	private GymOwnerDAO gymOwnerDAO = new GymOwnerDAOImpl();
+	private INotificationProvider notificationService = new NotificationServiceImpl();
+	//private static java.util.Map<String, Slot> slotMap = GymServiceImpl.slotMap;
 
 	@Override
 	public Booking createBooking(String customerId, String slotId) {
 		// TODO Auto-generated method stub
-		Slot slot = slotMap.get(slotId);
+		Slot slot = gymOwnerDAO.getSlotById(slotId);
 		if (slot == null) {
 			System.out.println("Slot not found.");
 			return null;
@@ -40,8 +45,11 @@ public class BookingServiceImpl implements BookingService {
 
 		//Persist booking via DAO
 		bookingDAO.addBooking(booking);
+		notificationService.sendNotification(
+				customerId,
+				"Booking CONFIRMED. Booking ID: " + booking.getBookingId()
+		);
 
-		System.out.println("Booking successful. Booking ID: " + booking.getBookingId());
 		return booking;
 	}
 
@@ -59,13 +67,19 @@ public class BookingServiceImpl implements BookingService {
 			return false;
 		}
 
-		Slot slot = slotMap.get(booking.getSlotId());
+		Slot slot = gymOwnerDAO.getSlotById(booking.getSlotId());
 		if (slot != null) {
 			slot.setCurrentBookings(slot.getCurrentBookings() - 1);
 		}
 
-		return bookingDAO.cancelBooking(bookingId);
-	}
+		bookingDAO.cancelBooking(bookingId);
+
+		notificationService.sendNotification(
+				booking.getUserId(),
+				"Booking CANCELLED. Booking ID: " + bookingId
+		);
+
+		return true;	}
 
 	@Override
 	public List<Booking> getUpcomingBookings(String customerId) {
@@ -77,7 +91,7 @@ public class BookingServiceImpl implements BookingService {
 	@Override
 	public boolean checkConcurrency(String slotId) {
 		// TODO Auto-generated method stub
-		Slot slot = slotMap.get(slotId);
+		Slot slot = gymOwnerDAO.getSlotById(slotId);
 		return slot != null && slot.getCurrentBookings() < slot.getMaxCapacity();
 	}
 //
