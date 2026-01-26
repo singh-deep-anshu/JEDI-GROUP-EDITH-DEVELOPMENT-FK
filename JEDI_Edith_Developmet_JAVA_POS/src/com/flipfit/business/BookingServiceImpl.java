@@ -80,5 +80,5 @@ public class BookingServiceImpl implements BookingService {
 		Slot slot = slotMap.get(slotId);
 		return slot != null && slot.getCurrentBookings() < slot.getMaxCapacity();
 	}
-
+//
 }
