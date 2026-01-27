@@ -3,9 +3,14 @@ package com.flipfit.client;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 import com.flipfit.bean.GymCenter;
+import com.flipfit.bean.GymOwner;
+import com.flipfit.bean.User;
 import com.flipfit.bean.Slot;
 import com.flipfit.business.AdminService;
+import com.flipfit.dao.UserDAO;
+import com.flipfit.dao.UserDAOImpl;
 
 public class AdminFlipFitMenu {
 	private static AdminService adminService = new AdminService();
@@ -22,12 +27,13 @@ public class AdminFlipFitMenu {
 				System.out.println("6. View Gyms by City");
 				System.out.println("7. View System Analytics");
 				System.out.println("8. Manage City Data");
-				System.out.println("9. Logout");
+				System.out.println("9. Approve Gym Owner");
+				System.out.println("10. Logout");
 				System.out.print("Enter choice: ");
 				int choice = sc.nextInt();
 				sc.nextLine(); // Consume newline
 
-				if (choice == 9)
+				if (choice == 10)
 					break;
 
 				switch (choice) {
@@ -54,6 +60,9 @@ public class AdminFlipFitMenu {
 						break;
 					case 8:
 						adminService.manageCityData();
+						break;
+					case 9:
+						approveGymOwner(sc);
 						break;
 					default:
 						System.out.println("Invalid choice.");
@@ -246,4 +255,57 @@ public class AdminFlipFitMenu {
 			System.out.println("✗ Failed to view slots: " + e.getMessage());
 		}
 	}
+
+		private static void approveGymOwner(Scanner sc) {
+			UserDAO userDAO = new UserDAOImpl();
+			List<User> all = userDAO.getAllUsers();
+			List<GymOwner> owners = all.stream()
+					.filter(u -> u instanceof GymOwner)
+					.map(u -> (GymOwner) u)
+					.collect(Collectors.toList());
+
+			if (owners.isEmpty()) {
+				System.out.println("\nNo gym owners registered.");
+				return;
+			}
+
+			System.out.println("\n===== GYM OWNERS =====");
+			System.out.println(String.format("%-4s | %-36s | %-20s | %-30s | %s", "#", "Owner ID", "Name", "Email", "Verified"));
+			System.out.println("-".repeat(110));
+			for (int i = 0; i < owners.size(); i++) {
+				GymOwner o = owners.get(i);
+				System.out.println(String.format("%-4d | %-36s | %-20s | %-30s | %s",
+					i + 1,
+					o.getUserId(),
+					o.getName(),
+					o.getEmail(),
+					o.isVerified() ? "Yes" : "No"));
+			}
+
+			System.out.print("\nEnter the number of the owner to approve (0 to cancel): ");
+			int sel = -1;
+			try {
+				sel = Integer.parseInt(sc.nextLine());
+			} catch (NumberFormatException nfe) {
+				System.out.println("Invalid selection.");
+				return;
+			}
+
+			if (sel <= 0) {
+				System.out.println("Cancelled.");
+				return;
+			}
+
+			if (sel > owners.size()) {
+				System.out.println("Selection out of range.");
+				return;
+			}
+
+			String ownerId = owners.get(sel - 1).getUserId();
+			try {
+				adminService.approveGymOwner(ownerId);
+			} catch (Exception e) {
+				System.out.println("✗ Owner approval failed: " + e.getMessage());
+			}
+		}
 }

@@ -2,16 +2,28 @@ package com.flipfit.client;
 
 import com.flipfit.bean.GymCustomer;
 import com.flipfit.bean.GymOwner;
+import com.flipfit.bean.GymAdmin;
+import java.util.UUID;
 import com.flipfit.business.AccountService;
 import com.flipfit.business.AccountServiceImpl;
+import com.flipfit.dao.UserDAO;
+import com.flipfit.dao.UserDAOImpl;
+import com.flipfit.bean.User;
 
 import java.util.Scanner;
 
 public class FlipFitApplication {
     private static Scanner scanner = new Scanner(System.in);
     private static AccountService accountService = new AccountServiceImpl();
+    private static UserDAO userDAO = new UserDAOImpl();
 
     public static void main(String[] args) {
+        // Seed default admin so AdminFlipFitMenu is reachable
+        GymAdmin defaultAdmin = new GymAdmin(UUID.randomUUID().toString(), "Admin", "admin@flipfit.com", "admin123", "9999999999", "Bangalore");
+        if (userDAO.getUserProfile("admin@flipfit.com") == null) {
+            userDAO.registerUser(defaultAdmin);
+        }
+
         System.out.println("WELCOME TO FLIPFIT APP");
         while (true) {
             System.out.println("1. Login\n2. Register Customer\n3. Register Gym Owner\n4. Exit");
@@ -100,11 +112,15 @@ public class FlipFitApplication {
             return;
         }
 
+        // Lookup user to fetch userId (menus expect IDs)
+        User user = userDAO.getUserProfile(email);
+        String userId = user != null ? user.getUserId() : null;
+
         if (role.equals("ADMIN"))
             AdminFlipFitMenu.showMenu();
         else if (role.equals("GYM_OWNER"))
-            GymOwnerFlipFitMenu.showMenu(email);
+            GymOwnerFlipFitMenu.showMenu(userId);
         else if (role.equals("GYM_CUSTOMER"))
-            CustomerFlipFitMenu.showMenu();
+            CustomerFlipFitMenu.showMenu(userId);
     }
 }
