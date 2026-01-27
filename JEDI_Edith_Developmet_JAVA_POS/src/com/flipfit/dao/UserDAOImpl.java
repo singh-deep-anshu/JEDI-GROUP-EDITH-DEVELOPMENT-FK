@@ -3,6 +3,8 @@ package com.flipfit.dao;
 import com.flipfit.bean.User;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 
 public class UserDAOImpl implements UserDAO {
     // The "Database" for Users (keyed by email)
@@ -45,5 +47,10 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public User getUserById(String userId) {
         return usersByIdMap.get(userId);
+    }
+
+    @Override
+    public List<User> getAllUsers() {
+        return new ArrayList<>(usersMap.values());
     }
 }

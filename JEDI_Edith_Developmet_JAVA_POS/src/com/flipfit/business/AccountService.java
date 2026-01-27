@@ -3,6 +3,10 @@ package com.flipfit.business;
 import com.flipfit.bean.GymOwner;
 import com.flipfit.bean.GymCustomer;
 import com.flipfit.bean.GymCenter;
+import com.flipfit.exception.GymNotFoundException;
+import com.flipfit.exception.GymOwnerNotVerifiedException;
+import com.flipfit.exception.UnauthorizedAccessException;
+import com.flipfit.exception.UserFoundException;
 
 /**
  * Service interface for managing user accounts (registration and login).
@@ -14,7 +18,7 @@ public interface AccountService {
    * @param customer The customer to register
    * @return true if registration successful, false otherwise
    */
-  boolean registerCustomer(GymCustomer customer);
+  boolean registerCustomer(GymCustomer customer) throws UserFoundException;
 
   /**
    * Registers a new gym owner in the system (pending admin approval).
@@ -22,7 +26,7 @@ public interface AccountService {
    * @param owner The gym owner to register
    * @return true if registration successful, false otherwise
    */
-  boolean registerOwner(GymOwner owner);
+  boolean registerOwner(GymOwner owner) throws UserFoundException;
 
   /**
    * Authenticates a user with email and password.
@@ -40,5 +44,5 @@ public interface AccountService {
    * @param gym     The gym center details
    * @return The registered GymCenter with generated ID
    */
-  GymCenter addGymCenter(String ownerId, GymCenter gym);
+  GymCenter addGymCenter(String ownerId, GymCenter gym) throws GymNotFoundException, UnauthorizedAccessException, GymOwnerNotVerifiedException;
 }

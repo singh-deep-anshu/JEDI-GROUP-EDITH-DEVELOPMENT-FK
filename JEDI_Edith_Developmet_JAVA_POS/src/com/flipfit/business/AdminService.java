@@ -8,6 +8,8 @@ import com.flipfit.dao.GymOwnerDAOImpl;
 import com.flipfit.dao.UserDAO;
 import com.flipfit.dao.UserDAOImpl;
 import com.flipfit.exception.GymNotFoundException;
+import com.flipfit.exception.InvalidSlotException;
+import com.flipfit.exception.UnauthorizedAccessException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,7 +33,7 @@ public class AdminService implements IInventoryManager, IReportViewer {
 	 * @throws IllegalStateException if gym is already approved
 	 */
 	@Override
-	public void approveGymCenter(String centerId) {
+	public void approveGymCenter(String centerId) throws GymNotFoundException {
 		if (centerId == null || centerId.trim().isEmpty()) {
 			throw new IllegalArgumentException("Center ID cannot be null or empty");
 		}
@@ -39,8 +41,6 @@ public class AdminService implements IInventoryManager, IReportViewer {
 		try {
 			gymService.verifyGym(centerId);
 			System.out.println("✓ Gym center '" + centerId + "' has been approved successfully.");
-		} catch (GymNotFoundException e) {
-			throw new GymNotFoundException(centerId);
 		} catch (IllegalStateException e) {
 			throw e;
 		}
@@ -142,7 +142,7 @@ public class AdminService implements IInventoryManager, IReportViewer {
 	 * @throws IllegalArgumentException if gym validation fails
 	 * @throws GymNotFoundException     if owner does not exist
 	 */
-	public GymCenter addCenter(GymCenter gym) {
+	public GymCenter addCenter(GymCenter gym) throws GymNotFoundException, UnauthorizedAccessException {
 		GymCenter addedGym = gymService.addCenter(gym);
 		System.out.println("✓ Gym center '" + gym.getName() + "' has been added successfully.");
 		System.out.println("  Center ID: " + addedGym.getCenterId());
@@ -172,7 +172,7 @@ public class AdminService implements IInventoryManager, IReportViewer {
 	 * @throws IllegalArgumentException if slot validation fails
 	 * @throws GymNotFoundException     if gym center not found
 	 */
-	public Slot addSlot(Slot slot) {
+	public Slot addSlot(Slot slot) throws GymNotFoundException, InvalidSlotException {
 		Slot createdSlot = gymService.addSlot(slot);
 		System.out.println("✓ Slot created successfully!");
 		System.out.println("  Slot ID: " + createdSlot.getSlotId());

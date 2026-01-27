@@ -6,6 +6,9 @@ import com.flipfit.bean.GymCenter;
 import com.flipfit.bean.Role;
 import com.flipfit.dao.UserDAO;
 import com.flipfit.dao.UserDAOImpl;
+import com.flipfit.exception.GymNotFoundException;
+import com.flipfit.exception.GymOwnerNotVerifiedException;
+import com.flipfit.exception.UnauthorizedAccessException;
 import com.flipfit.exception.UserFoundException;
 import com.flipfit.validation.GymOwnerValidator;
 import com.flipfit.validation.UserValidator;
@@ -32,7 +35,7 @@ public class AccountServiceImpl implements AccountService {
    * @return true if registration successful, false otherwise
    */
   @Override
-  public boolean registerCustomer(GymCustomer customer) {
+  public boolean registerCustomer(GymCustomer customer) throws UserFoundException {
     // Validate customer data
     ValidationResult result = userValidator.validate(customer);
     if (!result.isValid()) {
@@ -62,7 +65,7 @@ public class AccountServiceImpl implements AccountService {
    * @return true if registration successful, false otherwise
    */
   @Override
-  public boolean registerOwner(GymOwner owner) {
+  public boolean registerOwner(GymOwner owner) throws UserFoundException {
     // Validate gym owner data
     ValidationResult result = gymOwnerValidator.validate(owner);
     if (!result.isValid()) {
@@ -113,7 +116,7 @@ public class AccountServiceImpl implements AccountService {
    * @return The registered GymCenter with generated ID
    */
   @Override
-  public GymCenter addGymCenter(String ownerId, GymCenter gym) {
+  public GymCenter addGymCenter(String ownerId, GymCenter gym) throws GymNotFoundException, UnauthorizedAccessException, GymOwnerNotVerifiedException {
     return gymService.registerGymCenter(ownerId, gym);
   }
 }

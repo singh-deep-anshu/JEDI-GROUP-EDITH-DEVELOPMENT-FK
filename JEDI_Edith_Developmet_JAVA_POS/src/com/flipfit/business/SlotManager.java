@@ -24,7 +24,7 @@ public class SlotManager {
    * @throws SlotNotFoundException if slot doesn't exist
    * @throws SlotFullException     if slot is fully booked
    */
-  public boolean isSlotAvailable(String slotId) {
+  public boolean isSlotAvailable(String slotId) throws SlotNotFoundException, SlotFullException {
     Slot slot = gymOwnerDAO.getSlotById(slotId);
 
     if (slot == null) {
@@ -45,7 +45,7 @@ public class SlotManager {
    * @return Number of available seats
    * @throws SlotNotFoundException if slot doesn't exist
    */
-  public int getAvailableSeats(String slotId) {
+  public int getAvailableSeats(String slotId) throws SlotNotFoundException {
     Slot slot = gymOwnerDAO.getSlotById(slotId);
 
     if (slot == null) {
@@ -82,7 +82,7 @@ public class SlotManager {
    * @throws SlotNotFoundException if slot doesn't exist
    * @throws SlotFullException     if slot is fully booked
    */
-  public void bookSlot(String slotId) {
+  public void bookSlot(String slotId) throws SlotNotFoundException, SlotFullException {
     Slot slot = gymOwnerDAO.getSlotById(slotId);
 
     if (slot == null) {
@@ -102,7 +102,7 @@ public class SlotManager {
    * @param slotId The slot ID
    * @throws SlotNotFoundException if slot doesn't exist
    */
-  public void cancelSlotBooking(String slotId) {
+  public void cancelSlotBooking(String slotId) throws SlotNotFoundException {
     Slot slot = gymOwnerDAO.getSlotById(slotId);
 
     if (slot == null) {

@@ -4,6 +4,10 @@ import java.util.List;
 
 import com.flipfit.bean.GymCenter;
 import com.flipfit.bean.Slot;
+import com.flipfit.exception.GymNotFoundException;
+import com.flipfit.exception.GymOwnerNotVerifiedException;
+import com.flipfit.exception.InvalidSlotException;
+import com.flipfit.exception.UnauthorizedAccessException;
 
 public interface GymService {
     /**
@@ -13,7 +17,7 @@ public interface GymService {
      * @param details The gym center details
      * @return The registered GymCenter with generated ID
      */
-    public GymCenter registerGymCenter(String ownerId, GymCenter details);
+    public GymCenter registerGymCenter(String ownerId, GymCenter details) throws GymNotFoundException, UnauthorizedAccessException, GymOwnerNotVerifiedException;
 
     /**
      * Adds a new time slot to a gym center.
@@ -22,7 +26,7 @@ public interface GymService {
      * @param slotDetails The slot details to add
      * @return The created Slot with generated ID
      */
-    public Slot addSlot(String centerId, Slot slotDetails);
+    public Slot addSlot(String centerId, Slot slotDetails) throws InvalidSlotException, GymNotFoundException;
 
     /**
      * Adds a new time slot to a gym center.
@@ -31,7 +35,7 @@ public interface GymService {
      * @param slot The slot to add (must have centerId set)
      * @return The created Slot with generated ID
      */
-    public Slot addSlot(Slot slot);
+    public Slot addSlot(Slot slot) throws InvalidSlotException, GymNotFoundException;
 
     /**
      * Searches for active gym centers in a specific city.
@@ -65,7 +69,7 @@ public interface GymService {
      * @param centerId The gym center ID to approve
      * @return true if approval successful
      */
-    public boolean approveGymCenter(String centerId);
+    public boolean approveGymCenter(String centerId) throws GymNotFoundException;
 
     /**
      * Verifies (approves) a gym center (same as approveGymCenter).
@@ -73,7 +77,7 @@ public interface GymService {
      * @param centerId The gym center ID to verify
      * @return true if verification successful
      */
-    public boolean verifyGym(String centerId);
+    public boolean verifyGym(String centerId) throws GymNotFoundException;
 
     /**
      * Adds a new gym center with city and owner validation.
@@ -84,7 +88,7 @@ public interface GymService {
      * @throws IllegalArgumentException if gym is invalid
      * @throws GymNotFoundException     if owner does not exist
      */
-    public GymCenter addCenter(GymCenter gym);
+    public GymCenter addCenter(GymCenter gym) throws GymNotFoundException, UnauthorizedAccessException;
 
     /**
      * Views all gym centers in a specific city.

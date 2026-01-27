@@ -38,7 +38,7 @@ public class GymServiceImpl implements GymService {
 	 * @throws IllegalArgumentException     if gym details fail validation
 	 */
 	@Override
-	public GymCenter registerGymCenter(String ownerId, GymCenter gym) {
+	public GymCenter registerGymCenter(String ownerId, GymCenter gym) throws GymNotFoundException, UnauthorizedAccessException, GymOwnerNotVerifiedException {
 		// Validate that ownerId exists and is a GymOwner
 		GymOwner owner = validateOwnerExists(ownerId);
 
@@ -71,7 +71,7 @@ public class GymServiceImpl implements GymService {
 	 * @param slotDetails The slot details to add
 	 * @return The created Slot with generated ID
 	 */
-	public Slot addSlot(String centerId, Slot slotDetails) {
+	public Slot addSlot(String centerId, Slot slotDetails) throws InvalidSlotException, GymNotFoundException {
 		if (centerId == null || centerId.trim().isEmpty()) {
 			throw new IllegalArgumentException("Center ID cannot be null or empty");
 		}
@@ -111,7 +111,7 @@ public class GymServiceImpl implements GymService {
 	 * @throws InvalidSlotException     if slot overlaps with existing slots
 	 */
 	@Override
-	public Slot addSlot(Slot slot) {
+	public Slot addSlot(Slot slot) throws InvalidSlotException, GymNotFoundException {
 		// Validate slot object
 		if (slot == null) {
 			throw new IllegalArgumentException("Slot cannot be null");
@@ -181,7 +181,7 @@ public class GymServiceImpl implements GymService {
 	 * @throws IllegalStateException if gym is already verified
 	 */
 	@Override
-	public boolean verifyGym(String centerId) {
+	public boolean verifyGym(String centerId) throws GymNotFoundException {
 		// Validate centerId
 		if (centerId == null || centerId.trim().isEmpty()) {
 			throw new IllegalArgumentException("Center ID cannot be null or empty");
@@ -205,7 +205,7 @@ public class GymServiceImpl implements GymService {
 	}
 
 	@Override
-	public boolean approveGymCenter(String centerId) {
+	public boolean approveGymCenter(String centerId) throws GymNotFoundException {
 		// Delegate to verifyGym for consistency
 		return verifyGym(centerId);
 	}
@@ -259,7 +259,7 @@ public class GymServiceImpl implements GymService {
 	 * @throws UnauthorizedAccessException if user is not a gym owner
 	 * @throws GymNotFoundException        if owner does not exist
 	 */
-	private GymOwner validateOwnerExists(String ownerId) {
+	private GymOwner validateOwnerExists(String ownerId) throws GymNotFoundException, UnauthorizedAccessException {
 		// Fetch user by ID from DAO
 		Object user = userDAO.getUserById(ownerId);
 
@@ -286,7 +286,7 @@ public class GymServiceImpl implements GymService {
 	 * @throws GymNotFoundException     if owner does not exist
 	 */
 	@Override
-	public GymCenter addCenter(GymCenter gym) {
+	public GymCenter addCenter(GymCenter gym) throws GymNotFoundException, UnauthorizedAccessException {
 		// Validate gym details (name, city, capacity, address)
 		ValidationResult validationResult = gymValidator.validate(gym);
 		if (!validationResult.isValid()) {
