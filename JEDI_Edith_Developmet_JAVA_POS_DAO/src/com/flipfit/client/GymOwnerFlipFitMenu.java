@@ -9,7 +9,8 @@ public class GymOwnerFlipFitMenu {
 	private static GymService gymService = new GymServiceImpl();
 
 	public static void showMenu(String ownerId) {
-		try (Scanner sc = new Scanner(System.in)) {
+		Scanner sc = new Scanner(System.in);
+
 			while (true) {
 				System.out.println("\n===== GYM OWNER DASHBOARD =====");
 				System.out.println("1. Add New Gym Center");
@@ -42,7 +43,7 @@ public class GymOwnerFlipFitMenu {
 				}
 			}
 		}
-	}
+	
 
 	private static void addGymCenter(Scanner sc, String ownerId) {
 		GymCenter gym = new GymCenter();

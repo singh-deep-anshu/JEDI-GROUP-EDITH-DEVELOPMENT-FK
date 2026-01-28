@@ -9,12 +9,14 @@ import com.flipfit.business.GymService;
 import com.flipfit.business.GymServiceImpl;
 import com.flipfit.business.BookingService;
 import com.flipfit.business.BookingServiceImpl;
-import com.flipfit.dao.GymOwnerDAOImpl;
+import com.flipfit.dao.*;
 
 public class CustomerFlipFitMenu {
 	private static GymService gymService = new GymServiceImpl();
 	private static GymOwnerDAOImpl gymDAO = new GymOwnerDAOImpl();
 	private static BookingService bookingService = new BookingServiceImpl();
+	private static GymCenterDAO gymCenterDAO = new GymCenterDAOImpl();
+	private static SlotDAO slotDAO = new SlotDAOImpl();
 
 	public static void showMenu(String userId) {
 		Scanner sc = new Scanner(System.in);
@@ -61,7 +63,7 @@ public class CustomerFlipFitMenu {
 	}
 
 	private static void viewAllCenters() {
-		List<GymCenter> allCenters = gymDAO.getAllCenters();
+		List<GymCenter> allCenters = gymCenterDAO.getAllGymCenters();
 		List<GymCenter> activeCenters = allCenters.stream()
 				.filter(GymCenter::isActive)
 				.toList();
@@ -110,7 +112,7 @@ public class CustomerFlipFitMenu {
 	}
 
 	private static void bookSlotFlow(Scanner sc, String userId) {
-		List<GymCenter> allCenters = gymDAO.getAllCenters();
+		List<GymCenter> allCenters = gymCenterDAO.getAllGymCenters();
 		List<GymCenter> activeCenters = allCenters.stream().filter(GymCenter::isActive).toList();
 
 		if (activeCenters.isEmpty()) {
@@ -138,7 +140,7 @@ public class CustomerFlipFitMenu {
 		}
 
 		String centerId = activeCenters.get(idx).getCenterId();
-		List<Slot> slots = gymDAO.getSlotsByCenterId(centerId);
+		List<Slot> slots = slotDAO.getSlotsByCenterId(centerId);
 		if (slots.isEmpty()) {
 			System.out.println("No slots available for this center.");
 			return;

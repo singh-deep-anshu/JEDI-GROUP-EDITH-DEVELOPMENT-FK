@@ -5,11 +5,15 @@ import com.flipfit.bean.GymOwner;
 import com.flipfit.bean.Slot;
 import com.flipfit.dao.GymOwnerDAO;
 import com.flipfit.dao.GymOwnerDAOImpl;
+import com.flipfit.dao.SlotDAO;
+import com.flipfit.dao.SlotDAOImpl;
 import com.flipfit.dao.UserDAO;
 import com.flipfit.dao.UserDAOImpl;
 import com.flipfit.exception.GymNotFoundException;
 import com.flipfit.exception.InvalidSlotException;
 import com.flipfit.exception.UnauthorizedAccessException;
+import com.flipfit.dao.GymCenterDAO;
+import com.flipfit.dao.GymCenterDAOImpl;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,6 +27,8 @@ public class AdminService implements IInventoryManager, IReportViewer {
 	private GymOwnerDAO gymOwnerDAO = new GymOwnerDAOImpl();
 	private UserDAO userDAO = new UserDAOImpl();
 	private GymService gymService = new GymServiceImpl();
+	private GymCenterDAO GymCenterDAO = new GymCenterDAOImpl();
+	private SlotDAO slotDAO = new SlotDAOImpl();
 
 	/**
 	 * Approves a gym center for operation.
@@ -89,7 +95,7 @@ public class AdminService implements IInventoryManager, IReportViewer {
 	 */
 	@Override
 	public List<GymCenter> viewPendingGyms() {
-		return gymOwnerDAO.getAllCenters()
+		return GymCenterDAO.getAllGymCenters()
 				.stream()
 				.filter(gym -> !gym.isActive()) // Inactive = pending approval
 				.collect(Collectors.toList());
@@ -114,7 +120,7 @@ public class AdminService implements IInventoryManager, IReportViewer {
 	public void viewSystemAnalytics() {
 		System.out.println("\n===== SYSTEM ANALYTICS =====");
 
-		List<GymCenter> allGyms = gymOwnerDAO.getAllCenters();
+		List<GymCenter> allGyms = GymCenterDAO.getAllGymCenters();
 		long approvedGyms = allGyms.stream().filter(GymCenter::isActive).count();
 		long pendingGyms = allGyms.stream().filter(gym -> !gym.isActive()).count();
 
@@ -196,7 +202,7 @@ public class AdminService implements IInventoryManager, IReportViewer {
 			throw new IllegalArgumentException("Center ID cannot be null or empty");
 		}
 
-		List<Slot> existingSlots = gymOwnerDAO.getSlotsByCenterId(centerId);
+		List<Slot> existingSlots = slotDAO.getSlotsByCenterId(centerId);
 
 		return existingSlots.stream()
 				.anyMatch(slot -> slotsOverlap(startTime, endTime, slot.getStartTime(), slot.getEndTime()));
@@ -221,7 +227,7 @@ public class AdminService implements IInventoryManager, IReportViewer {
 			throw new IllegalArgumentException("Center ID cannot be null or empty");
 		}
 
-		List<Slot> slots = gymOwnerDAO.getSlotsByCenterId(centerId);
+		List<Slot> slots = slotDAO.getSlotsByCenterId(centerId);
 		return slots;
 	}
 }

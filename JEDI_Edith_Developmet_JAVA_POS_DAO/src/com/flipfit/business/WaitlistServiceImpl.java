@@ -9,6 +9,8 @@ import com.flipfit.dao.WaitlistDAO;
 import com.flipfit.dao.WaitlistDAOImpl;
 import com.flipfit.dao.GymOwnerDAO;
 import com.flipfit.dao.GymOwnerDAOImpl;
+import com.flipfit.dao.SlotDAO;
+import com.flipfit.dao.SlotDAOImpl;
 
 
 public class WaitlistServiceImpl implements WaitlistService {
@@ -17,6 +19,7 @@ public class WaitlistServiceImpl implements WaitlistService {
 	private GymOwnerDAO gymOwnerDAO = new GymOwnerDAOImpl();
 	private BookingService bookingService = new BookingServiceImpl();
 	private INotificationProvider notificationService = new NotificationServiceImpl();
+	private SlotDAO slotDAO = new SlotDAOImpl();
 
 	// Shared slot storage
 	//private static java.util.Map<String, Slot> slotMap = GymServiceImpl.slotMap;
@@ -24,7 +27,7 @@ public class WaitlistServiceImpl implements WaitlistService {
 	@Override
 	public void addToWaitlist(String customerId, String slotId) {
 		// TODO Auto-generated method stub
-		Slot slot = gymOwnerDAO.getSlotById(slotId);
+		Slot slot = slotDAO.getSlotById(slotId);
 		if (slot == null) {
 			System.out.println("Slot not found. Cannot add to waitlist.");
 			return;
@@ -42,7 +45,7 @@ public class WaitlistServiceImpl implements WaitlistService {
 	@Override
 	public GymCustomer promoteNextUser(String slotId) {
 		// TODO Auto-generated method stub
-		Slot slot = gymOwnerDAO.getSlotById(slotId);
+		Slot slot = slotDAO.getSlotById(slotId);
 		if (slot == null) {
 			return null;
 		}

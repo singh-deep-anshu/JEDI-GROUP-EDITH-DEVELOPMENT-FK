@@ -10,9 +10,9 @@ import com.flipfit.exception.GymNotFoundException;
 import com.flipfit.exception.GymOwnerNotVerifiedException;
 import com.flipfit.exception.UnauthorizedAccessException;
 import com.flipfit.exception.UserFoundException;
-import com.flipfit.validation.GymOwnerValidator;
-import com.flipfit.validation.UserValidator;
-import com.flipfit.validation.ValidationResult;
+// import com.flipfit.validation.GymOwnerValidator;
+// import com.flipfit.validation.UserValidator;
+// import com.flipfit.validation.ValidationResult;
 
 import java.util.Date;
 import java.util.UUID;
@@ -23,8 +23,8 @@ import java.util.UUID;
 public class AccountServiceImpl implements AccountService {
 
   private UserDAO userDAO = new UserDAOImpl();
-  private UserValidator userValidator = new UserValidator();
-  private GymOwnerValidator gymOwnerValidator = new GymOwnerValidator();
+  // private UserValidator userValidator = new UserValidator();
+  // private GymOwnerValidator gymOwnerValidator = new GymOwnerValidator();
   private GymService gymService = new GymServiceImpl();
 
   /**
@@ -37,11 +37,11 @@ public class AccountServiceImpl implements AccountService {
   @Override
   public boolean registerCustomer(GymCustomer customer) throws UserFoundException {
     // Validate customer data
-    ValidationResult result = userValidator.validate(customer);
-    if (!result.isValid()) {
-      System.out.println("Customer validation failed: " + result.getErrorsAsString());
-      return false;
-    }
+    // ValidationResult result = userValidator.validate(customer);
+    // if (!result.isValid()) {
+    //   System.out.println("Customer validation failed: " + result.getErrorsAsString());
+    //   return false;
+    // }
 
     // Check if email already exists
     if (userDAO.getUserProfile(customer.getEmail()) != null) {
@@ -49,7 +49,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     // Generate userId
-    customer.setUserId(UUID.randomUUID().toString());
+    customer.setUserId(UUID.randomUUID().toString().substring(0,7));
     customer.setRole(Role.GYM_CUSTOMER);
     customer.setRegistrationDate(new Date());
     customer.setActive(true);
@@ -67,11 +67,11 @@ public class AccountServiceImpl implements AccountService {
   @Override
   public boolean registerOwner(GymOwner owner) throws UserFoundException {
     // Validate gym owner data
-    ValidationResult result = gymOwnerValidator.validate(owner);
-    if (!result.isValid()) {
-      System.out.println("Owner validation failed: " + result.getErrorsAsString());
-      return false;
-    }
+    // ValidationResult result = gymOwnerValidator.validate(owner);
+    // if (!result.isValid()) {
+    //   System.out.println("Owner validation failed: " + result.getErrorsAsString());
+    //   return false;
+    // }
 
     // Check if email already exists
     if (userDAO.getUserProfile(owner.getEmail()) != null) {

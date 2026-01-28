@@ -16,16 +16,19 @@ import com.flipfit.exception.GymNotFoundException;
 import com.flipfit.exception.GymOwnerNotVerifiedException;
 import com.flipfit.exception.InvalidSlotException;
 import com.flipfit.exception.UnauthorizedAccessException;
-import com.flipfit.validation.GymValidator;
-import com.flipfit.validation.SlotValidator;
-import com.flipfit.validation.ValidationResult;
+// import com.flipfit.validation.GymValidator;
+// import com.flipfit.validation.SlotValidator;
+// import com.flipfit.validation.ValidationResult;
+import com.flipfit.dao.*;
 
 public class GymServiceImpl implements GymService {
 
 	private GymOwnerDAO gymOwnerDAO = new GymOwnerDAOImpl();
 	private UserDAO userDAO = new UserDAOImpl();
-	private GymValidator gymValidator = new GymValidator();
-	private SlotValidator slotValidator = new SlotValidator();
+	// private GymValidator gymValidator = new GymValidator();
+	// private SlotValidator slotValidator = new SlotValidator();
+	private GymCenterDAO gymCenterDAO = new GymCenterDAOImpl();
+	private SlotDAO slotDAO = new SlotDAOImpl();
 
 	/**
 	 * Registers a new gym center after validating the gym owner and gym details.
@@ -48,10 +51,10 @@ public class GymServiceImpl implements GymService {
 		}
 
 		// Validate gym details
-		ValidationResult validationResult = gymValidator.validate(gym);
-		if (!validationResult.isValid()) {
-			throw new IllegalArgumentException("Gym validation failed: " + validationResult.getErrorsAsString());
-		}
+		// ValidationResult validationResult = gymValidator.validate(gym);
+		// if (!validationResult.isValid()) {
+		// 	throw new IllegalArgumentException("Gym validation failed: " + validationResult.getErrorsAsString());
+		// }
 
 		// Set owner ID and generate unique center ID
 		gym.setOwnerId(ownerId);
@@ -59,7 +62,7 @@ public class GymServiceImpl implements GymService {
 		gym.setActive(false); // Pending admin approval by default
 
 		// Save to DAO
-		gymOwnerDAO.addGymCenter(gym);
+		gymCenterDAO.addGymCenter(gym);
 
 		return gym;
 	}
@@ -82,12 +85,12 @@ public class GymServiceImpl implements GymService {
 		}
 
 		slotDetails.setCenterId(centerId);
-		ValidationResult validationResult = slotValidator.validate(slotDetails);
-		if (!validationResult.isValid()) {
-			throw new IllegalArgumentException("Slot validation failed: " + validationResult.getErrorsAsString());
-		}
+		// ValidationResult validationResult = slotValidator.validate(slotDetails);
+		// if (!validationResult.isValid()) {
+		// 	throw new IllegalArgumentException("Slot validation failed: " + validationResult.getErrorsAsString());
+		// }
 
-		List<Slot> existingSlots = gymOwnerDAO.getSlotsByCenterId(centerId);
+		List<Slot> existingSlots = slotDAO.getSlotsByCenterId(centerId);
 		if (hasOverlappingSlots(slotDetails, existingSlots)) {
 			throw new InvalidSlotException(slotDetails.getStartTime(), slotDetails.getEndTime(),
 					"This time slot overlaps with an existing slot. Please choose a different time.");
@@ -95,7 +98,7 @@ public class GymServiceImpl implements GymService {
 
 		slotDetails.setSlotId(UUID.randomUUID().toString());
 		slotDetails.setCurrentBookings(0);
-		gymOwnerDAO.addSlot(slotDetails);
+		slotDAO.addSlot(slotDetails);
 
 		return slotDetails;
 	}
@@ -144,12 +147,12 @@ public class GymServiceImpl implements GymService {
 		}
 
 		// Validate city is a valid Flipfit location
-		if (!gymValidator.isValidCity(city)) {
-			throw new IllegalArgumentException("City '" + city + "' is not a valid Flipfit location");
-		}
+		// if (!gymValidator.isValidCity(city)) {
+		// 	throw new IllegalArgumentException("City '" + city + "' is not a valid Flipfit location");
+		// }
 
 		// Fetch all gym centers and filter by city and active status
-		List<GymCenter> allCenters = gymOwnerDAO.getAllCenters();
+		List<GymCenter> allCenters = gymCenterDAO.getAllGymCenters();
 
 		List<GymCenter> filteredCenters = allCenters.stream()
 				.filter(gym -> gym.getCityId() != null && gym.getCityId().equalsIgnoreCase(city.trim()))
@@ -217,7 +220,7 @@ public class GymServiceImpl implements GymService {
 	 * @return The GymCenter if found, null otherwise
 	 */
 	private GymCenter getGymCenterById(String centerId) {
-		List<GymCenter> allCenters = gymOwnerDAO.getAllCenters();
+		List<GymCenter> allCenters = gymCenterDAO.getAllGymCenters();
 		return allCenters.stream()
 				.filter(gym -> gym.getCenterId().equals(centerId))
 				.findFirst()
@@ -288,10 +291,10 @@ public class GymServiceImpl implements GymService {
 	@Override
 	public GymCenter addCenter(GymCenter gym) throws GymNotFoundException, UnauthorizedAccessException {
 		// Validate gym details (name, city, capacity, address)
-		ValidationResult validationResult = gymValidator.validate(gym);
-		if (!validationResult.isValid()) {
-			throw new IllegalArgumentException("Gym validation failed: " + validationResult.getErrorsAsString());
-		}
+		// ValidationResult validationResult = gymValidator.validate(gym);
+		// if (!validationResult.isValid()) {
+		// 	throw new IllegalArgumentException("Gym validation failed: " + validationResult.getErrorsAsString());
+		// }
 
 		// Validate owner exists
 		if (gym.getOwnerId() == null || gym.getOwnerId().trim().isEmpty()) {
@@ -305,7 +308,7 @@ public class GymServiceImpl implements GymService {
 		gym.setActive(false); // Pending admin approval by default
 
 		// Save to DAO
-		gymOwnerDAO.addGymCenter(gym);
+		gymCenterDAO.addGymCenter(gym);
 
 		return gym;
 	}
@@ -326,7 +329,7 @@ public class GymServiceImpl implements GymService {
 		}
 
 		// Fetch all gym centers and filter by city
-		List<GymCenter> allCenters = gymOwnerDAO.getAllCenters();
+		List<GymCenter> allCenters = gymCenterDAO.getAllGymCenters();
 
 		List<GymCenter> centersByCity = allCenters.stream()
 				.filter(gym -> gym.getCityId() != null && gym.getCityId().equalsIgnoreCase(city.trim()))

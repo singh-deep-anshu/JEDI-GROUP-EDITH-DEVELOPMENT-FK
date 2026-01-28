@@ -7,10 +7,7 @@ import java.util.UUID;
 import com.flipfit.bean.Booking;
 import com.flipfit.bean.BookingStatus;
 import com.flipfit.bean.Slot;
-import com.flipfit.dao.BookingDAO;
-import com.flipfit.dao.BookingDAOImpl;
-import com.flipfit.dao.GymOwnerDAO;
-import com.flipfit.dao.GymOwnerDAOImpl;
+import com.flipfit.dao.*;
 
 
 public class BookingServiceImpl implements BookingService {
@@ -18,12 +15,13 @@ public class BookingServiceImpl implements BookingService {
 	private BookingDAO bookingDAO = new BookingDAOImpl();
 	private GymOwnerDAO gymOwnerDAO = new GymOwnerDAOImpl();
 	private INotificationProvider notificationService = new NotificationServiceImpl();
+	private SlotDAO slotDAO = new SlotDAOImpl();
 	//private static java.util.Map<String, Slot> slotMap = GymServiceImpl.slotMap;
 
 	@Override
 	public Booking createBooking(String customerId, String slotId) {
 		// TODO Auto-generated method stub
-		Slot slot = gymOwnerDAO.getSlotById(slotId);
+		Slot slot = slotDAO.getSlotById(slotId);
 		if (slot == null) {
 			System.out.println("Slot not found.");
 			return null;
@@ -44,7 +42,7 @@ public class BookingServiceImpl implements BookingService {
 		slot.setCurrentBookings(slot.getCurrentBookings() + 1);
 
 		//Persist booking via DAO
-		bookingDAO.addBooking(booking);
+		bookingDAO.createBooking(booking);
 		notificationService.sendNotification(
 				customerId,
 				"Booking CONFIRMED. Booking ID: " + booking.getBookingId()
@@ -67,7 +65,7 @@ public class BookingServiceImpl implements BookingService {
 			return false;
 		}
 
-		Slot slot = gymOwnerDAO.getSlotById(booking.getSlotId());
+		Slot slot = slotDAO.getSlotById(booking.getSlotId());
 		if (slot != null) {
 			slot.setCurrentBookings(slot.getCurrentBookings() - 1);
 		}
@@ -91,7 +89,7 @@ public class BookingServiceImpl implements BookingService {
 	@Override
 	public boolean checkConcurrency(String slotId) {
 		// TODO Auto-generated method stub
-		Slot slot = gymOwnerDAO.getSlotById(slotId);
+		Slot slot = slotDAO.getSlotById(slotId);
 		return slot != null && slot.getCurrentBookings() < slot.getMaxCapacity();
 	}
 //

@@ -3,6 +3,8 @@ package com.flipfit.business;
 import com.flipfit.bean.Slot;
 import com.flipfit.dao.GymOwnerDAO;
 import com.flipfit.dao.GymOwnerDAOImpl;
+import com.flipfit.dao.SlotDAO;
+import com.flipfit.dao.SlotDAOImpl;
 import com.flipfit.exception.SlotFullException;
 import com.flipfit.exception.SlotNotFoundException;
 
@@ -15,6 +17,7 @@ import java.util.List;
 public class SlotManager {
 
   private GymOwnerDAO gymOwnerDAO = new GymOwnerDAOImpl();
+  private SlotDAO slotDAO = new SlotDAOImpl();
 
   /**
    * Checks if a slot has available capacity for a booking.
@@ -25,7 +28,7 @@ public class SlotManager {
    * @throws SlotFullException     if slot is fully booked
    */
   public boolean isSlotAvailable(String slotId) throws SlotNotFoundException, SlotFullException {
-    Slot slot = gymOwnerDAO.getSlotById(slotId);
+    Slot slot = slotDAO.getSlotById(slotId);
 
     if (slot == null) {
       throw new SlotNotFoundException(slotId);
@@ -46,7 +49,7 @@ public class SlotManager {
    * @throws SlotNotFoundException if slot doesn't exist
    */
   public int getAvailableSeats(String slotId) throws SlotNotFoundException {
-    Slot slot = gymOwnerDAO.getSlotById(slotId);
+    Slot slot = slotDAO.getSlotById(slotId);
 
     if (slot == null) {
       throw new SlotNotFoundException(slotId);
@@ -62,7 +65,7 @@ public class SlotManager {
    * @return List of slots for the center
    */
   public List<Slot> getSlotsByCenter(String centerId) {
-    return gymOwnerDAO.getSlotsByCenterId(centerId);
+    return slotDAO.getSlotsByCenterId(centerId);
   }
 
   /**
@@ -72,7 +75,7 @@ public class SlotManager {
    * @return Total number of slots
    */
   public int getTotalSlots(String centerId) {
-    return gymOwnerDAO.getSlotsByCenterId(centerId).size();
+    return slotDAO.getSlotsByCenterId(centerId).size();
   }
 
   /**
@@ -83,7 +86,7 @@ public class SlotManager {
    * @throws SlotFullException     if slot is fully booked
    */
   public void bookSlot(String slotId) throws SlotNotFoundException, SlotFullException {
-    Slot slot = gymOwnerDAO.getSlotById(slotId);
+    Slot slot = slotDAO.getSlotById(slotId);
 
     if (slot == null) {
       throw new SlotNotFoundException(slotId);
@@ -103,7 +106,7 @@ public class SlotManager {
    * @throws SlotNotFoundException if slot doesn't exist
    */
   public void cancelSlotBooking(String slotId) throws SlotNotFoundException {
-    Slot slot = gymOwnerDAO.getSlotById(slotId);
+    Slot slot = slotDAO.getSlotById(slotId);
 
     if (slot == null) {
       throw new SlotNotFoundException(slotId);
