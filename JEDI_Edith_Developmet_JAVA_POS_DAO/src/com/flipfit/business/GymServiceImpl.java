@@ -203,6 +203,7 @@ public class GymServiceImpl implements GymService {
 
 		// Mark gym as active
 		gym.setActive(true);
+		gymCenterDAO.updateGymCenter(gym);
 
 		return true;
 	}
@@ -264,8 +265,8 @@ public class GymServiceImpl implements GymService {
 	 */
 	private GymOwner validateOwnerExists(String ownerId) throws GymNotFoundException, UnauthorizedAccessException {
 		// Fetch user by ID from DAO
-		Object user = userDAO.getUserById(ownerId);
-
+//		Object user = userDAO.getUserById(ownerId);
+		Object user = gymOwnerDAO.getGymOwnerByUserId(ownerId);
 		if (user == null) {
 			throw new GymNotFoundException("Gym owner with ID " + ownerId + " not found");
 		}

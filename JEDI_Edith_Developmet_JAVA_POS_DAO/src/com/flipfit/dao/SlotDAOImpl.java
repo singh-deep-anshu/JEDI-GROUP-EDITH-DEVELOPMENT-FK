@@ -140,6 +140,21 @@ public class SlotDAOImpl implements SlotDAO {
     }
 
     @Override
+    public boolean updateSlotBookingCount(Connection conn, String slotId, int newBookingCount) {
+        String query = "UPDATE slot SET currentBookings = ? WHERE slotID = ?";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, newBookingCount);
+            pstmt.setString(2, slotId);
+            int rowsAffected = pstmt.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            System.err.println("[DAO] Error updating slot booking count (transactional): " + e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
     public boolean deleteSlot(String slotId) {
         String query = "DELETE FROM slot WHERE slotID = ?";
         

@@ -2,13 +2,14 @@ package com.flipfit.client;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.stream.Collectors;
-import com.flipfit.bean.GymCenter;
-import com.flipfit.bean.GymOwner;
-import com.flipfit.bean.User;
-import com.flipfit.bean.Slot;
+
+import com.flipfit.bean.*;
 import com.flipfit.business.AdminService;
+import com.flipfit.dao.GymOwnerDAO;
+import com.flipfit.dao.GymOwnerDAOImpl;
 import com.flipfit.dao.UserDAO;
 import com.flipfit.dao.UserDAOImpl;
 
@@ -258,11 +259,20 @@ public class AdminFlipFitMenu {
 
 		private static void approveGymOwner(Scanner sc) {
 			UserDAO userDAO = new UserDAOImpl();
-			List<User> all = userDAO.getAllUsers();
-			List<GymOwner> owners = all.stream()
-					.filter(u -> u instanceof GymOwner)
-					.map(u -> (GymOwner) u)
-					.collect(Collectors.toList());
+			GymOwnerDAO gymOwnerDAO = new GymOwnerDAOImpl();
+			List<User> allUsers = userDAO.getAllUsers();
+			List<GymOwner> allOwners = gymOwnerDAO.getAllGymOwners();
+
+// 2. Create a Map of Owners for fast O(1) lookup by ID
+			Map<String, GymOwner> ownerMap = allOwners.stream()
+					.collect(Collectors.toMap(GymOwner::getUserId, go -> go));
+
+// 3. Join and Filter
+			List<GymOwner> owners = allUsers.stream()
+					.filter(u -> Role.GYM_OWNER.equals(u.getRole()))      // Only look at users with the right role
+					.map(u -> ownerMap.get(u.getUserId()))            // "Join" by getting the GymOwner object from our map
+					.filter(go -> go != null && !go.isVerified())     // Filter for unverified (and ensure owner exists)
+					.toList();
 
 			if (owners.isEmpty()) {
 				System.out.println("\nNo gym owners registered.");

@@ -2,6 +2,7 @@ package com.flipfit.dao;
 
 import com.flipfit.bean.Booking;
 import com.flipfit.bean.BookingStatus;
+import java.sql.Connection;
 import java.util.List;
 
 /**
@@ -16,7 +17,10 @@ public interface BookingDAO {
      * @return true if successful, false otherwise
      */
     boolean createBooking(Booking booking);
-    
+
+    /** Transactional variant using existing Connection (no commit/rollback) */
+    boolean createBooking(Connection conn, Booking booking);
+
     /**
      * Retrieves a booking by its ID.
      * @param bookingId the booking ID
@@ -65,14 +69,20 @@ public interface BookingDAO {
      * @return true if successful, false otherwise
      */
     boolean updateBookingStatus(String bookingId, BookingStatus status);
-    
+
+    /** Transactional variant */
+    boolean updateBookingStatus(Connection conn, String bookingId, BookingStatus status);
+
     /**
      * Cancels a booking by updating its status to CANCELLED.
      * @param bookingId the booking ID to cancel
      * @return true if successful, false otherwise
      */
     boolean cancelBooking(String bookingId);
-    
+
+    /** Transactional variant */
+    boolean cancelBooking(Connection conn, String bookingId);
+
     /**
      * Deletes a booking by its ID.
      * @param bookingId the booking ID to delete

@@ -29,7 +29,10 @@ public class GymOwnerDAOImpl implements GymOwnerDAO {
             pstmt.setInt(4, gymOwner.isVerified() ? 1 : 0);
             
             int rowsAffected = pstmt.executeUpdate();
+            System.out.println("log 3 " + rowsAffected);
+
             return rowsAffected > 0;
+            
         } catch (SQLException e) {
             System.err.println("[DAO] Error registering gym owner: " + e.getMessage());
             return false;

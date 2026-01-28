@@ -4,6 +4,10 @@ import com.flipfit.bean.GymOwner;
 import com.flipfit.bean.GymCustomer;
 import com.flipfit.bean.GymCenter;
 import com.flipfit.bean.Role;
+import com.flipfit.dao.GymCustomerDAO;
+import com.flipfit.dao.GymCustomerDAOImpl;
+import com.flipfit.dao.GymOwnerDAO;
+import com.flipfit.dao.GymOwnerDAOImpl;
 import com.flipfit.dao.UserDAO;
 import com.flipfit.dao.UserDAOImpl;
 import com.flipfit.exception.GymNotFoundException;
@@ -26,6 +30,8 @@ public class AccountServiceImpl implements AccountService {
   // private UserValidator userValidator = new UserValidator();
   // private GymOwnerValidator gymOwnerValidator = new GymOwnerValidator();
   private GymService gymService = new GymServiceImpl();
+  private GymOwnerDAO gymOwnerDAO = new GymOwnerDAOImpl();
+  private GymCustomerDAO gymCustomerDAO = new GymCustomerDAOImpl();
 
   /**
    * Registers a new gym customer in the system.
@@ -54,7 +60,13 @@ public class AccountServiceImpl implements AccountService {
     customer.setRegistrationDate(new Date());
     customer.setActive(true);
 
-    return userDAO.registerUser(customer);
+    // Register in user table first
+    if (!userDAO.registerUser(customer)) {
+      return false;
+    }
+
+    // Then register in gym_customer table
+    return gymCustomerDAO.registerGymCustomer(customer);
   }
 
   /**
@@ -78,12 +90,20 @@ public class AccountServiceImpl implements AccountService {
       throw new UserFoundException(owner.getEmail());
     }
 
+    // if (gymOwnerDAO.getGymOwnerByUserId(owner.getUserId()) != null) {
+    //   throw new UserFoundException(owner.getEmail());
+    // }
+
     // Generate userId
     owner.setUserId(UUID.randomUUID().toString());
     owner.setRole(Role.GYM_OWNER);
     owner.setVerified(false); // Pending admin approval
+    
+    if(!userDAO.registerUser(owner)){
+      return false;
+    }
 
-    return userDAO.registerUser(owner);
+    return gymOwnerDAO.registerGymOwner(owner);
   }
 
   /**

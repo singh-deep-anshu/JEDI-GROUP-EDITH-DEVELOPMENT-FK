@@ -3,6 +3,7 @@ package com.flipfit.business;
 import com.flipfit.bean.GymCenter;
 import com.flipfit.bean.GymOwner;
 import com.flipfit.bean.Slot;
+import com.flipfit.bean.User;
 import com.flipfit.dao.GymOwnerDAO;
 import com.flipfit.dao.GymOwnerDAOImpl;
 import com.flipfit.dao.SlotDAO;
@@ -65,14 +66,13 @@ public class AdminService implements IInventoryManager, IReportViewer {
 			throw new IllegalArgumentException("Owner ID cannot be null or empty");
 		}
 
-		// Fetch the user
-		Object user = userDAO.getUserById(ownerId);
+		Object ownerObj = gymOwnerDAO.getGymOwnerByUserId(ownerId);
 
-		if (user == null || !(user instanceof GymOwner)) {
-			throw new IllegalArgumentException("Gym owner with ID '" + ownerId + "' not found");
+		if (ownerObj == null || !(ownerObj instanceof GymOwner)) {
+			throw new IllegalArgumentException("Gym owner record not found for ID: " + ownerId);
 		}
 
-		GymOwner owner = (GymOwner) user;
+		GymOwner owner = (GymOwner) ownerObj;
 
 		// Check if already verified
 		if (owner.isVerified()) {
@@ -82,8 +82,9 @@ public class AdminService implements IInventoryManager, IReportViewer {
 		// Mark owner as verified
 		owner.setVerified(true);
 
-		// Update in DAO
-		userDAO.updateUser(owner);
+//		// Update in DAO
+//		userDAO.updateUser(owner);
+		gymOwnerDAO.updateGymOwner(owner);
 
 		System.out.println("✓ Gym owner '" + ownerId + "' has been verified successfully.");
 	}

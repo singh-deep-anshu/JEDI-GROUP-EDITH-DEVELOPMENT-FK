@@ -150,7 +150,7 @@ public class CustomerFlipFitMenu {
 		List<Slot> available = slots.stream().filter(s -> s.getCurrentBookings() < s.getMaxCapacity()).toList();
 		for (int i = 0; i < available.size(); i++) {
 			Slot s = available.get(i);
-			System.out.println((i + 1) + ". Slot ID: " + s.getSlotId() + " | " + s.getStartTime() + " - " + s.getEndTime() + " | " + s.getCurrentBookings() + "/" + s.getMaxCapacity());
+			System.out.println((i + 1) + ". Slot ID: " + s.getSlotId() + " | " + s.getStartTime() + " - " + s.getEndTime() + " | " + (s.getMaxCapacity()-s.getCurrentBookings()) + "/" + s.getMaxCapacity());
 		}
 		if (available.isEmpty()) {
 			System.out.println("No available slots (all full).");
@@ -172,6 +172,33 @@ public class CustomerFlipFitMenu {
 		}
 
 		String slotId = available.get(sidx).getSlotId();
+
+		// New: check for conflicting bookings
+		List<Booking> conflicts = bookingService.getConflictingBookings(userId, slotId);
+		if (conflicts != null && !conflicts.isEmpty()) {
+			System.out.println("You already have a booking that conflicts with this slot:");
+			for (Booking c : conflicts) {
+				Slot cs = slotDAO.getSlotById(c.getSlotId());
+				String centerInfo = (cs != null) ? ("Center: " + cs.getCenterId() + " | ") : "";
+				System.out.println("- Booking ID: " + c.getBookingId() + " | " + centerInfo + "Slot: " + c.getSlotId());
+			}
+			System.out.print("Do you want to cancel these booking(s) and replace with the selected slot? (y/n): ");
+			String ans = sc.nextLine().trim().toLowerCase();
+			if (ans.equals("y") || ans.equals("yes")) {
+				List<String> idsToCancel = conflicts.stream().map(Booking::getBookingId).toList();
+				Booking booking = bookingService.createBookingWithReplace(userId, slotId, idsToCancel);
+				if (booking != null) {
+					System.out.println("Booking successful (replaced). Booking ID: " + booking.getBookingId());
+				} else {
+					System.out.println("Booking failed.");
+				}
+				return;
+			} else {
+				System.out.println("Booking aborted by user.");
+				return;
+			}
+		}
+
 		Booking booking = bookingService.createBooking(userId, slotId);
 		if (booking != null) {
 			System.out.println("Booking successful. Booking ID: " + booking.getBookingId());

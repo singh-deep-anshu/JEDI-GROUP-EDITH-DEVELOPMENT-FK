@@ -1,6 +1,7 @@
 package com.flipfit.dao;
 
 import com.flipfit.bean.Slot;
+import java.sql.Connection;
 import java.util.List;
 
 /**
@@ -50,7 +51,10 @@ public interface SlotDAO {
      * @return true if successful, false otherwise
      */
     boolean updateSlotBookingCount(String slotId, int newBookingCount);
-    
+
+    /** Transactional variant using provided Connection */
+    boolean updateSlotBookingCount(Connection conn, String slotId, int newBookingCount);
+
     /**
      * Deletes a slot by its ID.
      * @param slotId the slot ID to delete

@@ -32,6 +32,9 @@ public class UserDAOImpl implements UserDAO {
             pstmt.setString(7, user.getRole().toString());
             
             int rowsAffected = pstmt.executeUpdate();
+
+            System.out.println("log2 " + rowsAffected );
+
             return rowsAffected > 0;
         } catch (SQLException e) {
             System.err.println("[DAO] Error registering user: " + e.getMessage());

@@ -64,6 +64,7 @@ public class FlipFitApplication {
         owner.setGstNumber(scanner.nextLine());
 
         try {
+            System.out.println("log 1 " + owner);
             if (accountService.registerOwner(owner)) {
                 System.out.println("Owner Registration Request Sent. Pending Admin Approval.");
             } else {
