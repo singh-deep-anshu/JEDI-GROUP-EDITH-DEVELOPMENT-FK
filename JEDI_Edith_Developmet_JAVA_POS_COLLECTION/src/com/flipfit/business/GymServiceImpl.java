@@ -48,10 +48,10 @@ public class GymServiceImpl implements GymService {
 		}
 
 		// Validate gym details
-		ValidationResult validationResult = gymValidator.validate(gym);
-		if (!validationResult.isValid()) {
-			throw new IllegalArgumentException("Gym validation failed: " + validationResult.getErrorsAsString());
-		}
+		// ValidationResult validationResult = gymValidator.validate(gym);
+		// if (!validationResult.isValid()) {
+		//	throw new IllegalArgumentException("Gym validation failed: " + validationResult.getErrorsAsString());
+		// }
 
 		// Set owner ID and generate unique center ID
 		gym.setOwnerId(ownerId);
@@ -82,10 +82,10 @@ public class GymServiceImpl implements GymService {
 		}
 
 		slotDetails.setCenterId(centerId);
-		ValidationResult validationResult = slotValidator.validate(slotDetails);
-		if (!validationResult.isValid()) {
-			throw new IllegalArgumentException("Slot validation failed: " + validationResult.getErrorsAsString());
-		}
+		// ValidationResult validationResult = slotValidator.validate(slotDetails);
+		// if (!validationResult.isValid()) {
+		//	throw new IllegalArgumentException("Slot validation failed: " + validationResult.getErrorsAsString());
+		// }
 
 		List<Slot> existingSlots = gymOwnerDAO.getSlotsByCenterId(centerId);
 		if (hasOverlappingSlots(slotDetails, existingSlots)) {
@@ -144,9 +144,9 @@ public class GymServiceImpl implements GymService {
 		}
 
 		// Validate city is a valid Flipfit location
-		if (!gymValidator.isValidCity(city)) {
-			throw new IllegalArgumentException("City '" + city + "' is not a valid Flipfit location");
-		}
+		// if (!gymValidator.isValidCity(city)) {
+		//	throw new IllegalArgumentException("City '" + city + "' is not a valid Flipfit location");
+		// }
 
 		// Fetch all gym centers and filter by city and active status
 		List<GymCenter> allCenters = gymOwnerDAO.getAllCenters();
@@ -163,6 +163,15 @@ public class GymServiceImpl implements GymService {
 	public List<Slot> getAvailableSlots(String centerId, String date) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public List<GymCenter> getGymsByOwner(String ownerId) {
+		if (ownerId == null || ownerId.trim().isEmpty()) {
+			throw new IllegalArgumentException("Owner ID cannot be null or empty");
+		}
+
+		return gymOwnerDAO.getGymsByOwner(ownerId);
 	}
 
 	@Override
@@ -288,10 +297,10 @@ public class GymServiceImpl implements GymService {
 	@Override
 	public GymCenter addCenter(GymCenter gym) throws GymNotFoundException, UnauthorizedAccessException {
 		// Validate gym details (name, city, capacity, address)
-		ValidationResult validationResult = gymValidator.validate(gym);
-		if (!validationResult.isValid()) {
-			throw new IllegalArgumentException("Gym validation failed: " + validationResult.getErrorsAsString());
-		}
+		// ValidationResult validationResult = gymValidator.validate(gym);
+		// if (!validationResult.isValid()) {
+		//	throw new IllegalArgumentException("Gym validation failed: " + validationResult.getErrorsAsString());
+		// }
 
 		// Validate owner exists
 		if (gym.getOwnerId() == null || gym.getOwnerId().trim().isEmpty()) {

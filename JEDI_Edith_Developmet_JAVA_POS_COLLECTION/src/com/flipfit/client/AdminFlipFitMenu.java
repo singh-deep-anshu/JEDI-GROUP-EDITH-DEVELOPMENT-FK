@@ -16,8 +16,8 @@ public class AdminFlipFitMenu {
 	private static AdminService adminService = new AdminService();
 
 	public static void showMenu() {
-		try (Scanner sc = new Scanner(System.in)) {
-			while (true) {
+		Scanner sc = new Scanner(System.in);
+		while (true) {
 				System.out.println("\n===== ADMIN DASHBOARD =====");
 				System.out.println("1. View Pending Gym Centers");
 				System.out.println("2. Approve Gym Center");
@@ -68,7 +68,6 @@ public class AdminFlipFitMenu {
 						System.out.println("Invalid choice.");
 				}
 			}
-		}
 	}
 
 	private static void viewPendingGyms() {

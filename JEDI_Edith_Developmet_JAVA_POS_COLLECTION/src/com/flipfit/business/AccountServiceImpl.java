@@ -37,11 +37,11 @@ public class AccountServiceImpl implements AccountService {
   @Override
   public boolean registerCustomer(GymCustomer customer) throws UserFoundException {
     // Validate customer data
-    ValidationResult result = userValidator.validate(customer);
-    if (!result.isValid()) {
-      System.out.println("Customer validation failed: " + result.getErrorsAsString());
-      return false;
-    }
+    // ValidationResult result = userValidator.validate(customer);
+    // if (!result.isValid()) {
+    //   System.out.println("Customer validation failed: " + result.getErrorsAsString());
+    //   return false;
+    // }
 
     // Check if email already exists
     if (userDAO.getUserProfile(customer.getEmail()) != null) {
@@ -67,11 +67,11 @@ public class AccountServiceImpl implements AccountService {
   @Override
   public boolean registerOwner(GymOwner owner) throws UserFoundException {
     // Validate gym owner data
-    ValidationResult result = gymOwnerValidator.validate(owner);
-    if (!result.isValid()) {
-      System.out.println("Owner validation failed: " + result.getErrorsAsString());
-      return false;
-    }
+    // ValidationResult result = gymOwnerValidator.validate(owner);
+    // if (!result.isValid()) {
+    //   System.out.println("Owner validation failed: " + result.getErrorsAsString());
+    //   return false;
+    // }
 
     // Check if email already exists
     if (userDAO.getUserProfile(owner.getEmail()) != null) {

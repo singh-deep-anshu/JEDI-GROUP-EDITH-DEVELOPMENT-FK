@@ -47,6 +47,14 @@ public interface GymService {
     public List<GymCenter> searchCenters(String city, String filters);
 
     /**
+     * Returns gym centers registered by a specific owner (both active and pending).
+     *
+     * @param ownerId The gym owner's ID
+     * @return List of GymCenter objects owned by the owner
+     */
+    public List<GymCenter> getGymsByOwner(String ownerId);
+
+    /**
      * Gets available slots for a specific gym center on a given date.
      * 
      * @param centerId The gym center ID
